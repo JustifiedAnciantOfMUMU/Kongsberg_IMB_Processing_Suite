@@ -150,9 +150,6 @@ namespace IMB_Data_Processing
                 Pixels[i + 1] = color.G;
                 Pixels[i + 2] = color.R;
                 Pixels[i + 3] = color.A;
-
-                //System.Diagnostics.Debug.WriteLine("Pixel {0} = {1},{2},{3},{4}", i, Pixels[i], Pixels[i+1], Pixels[i+2], color.A);
-
             }
             if (Depth == 24) // For 24 bpp set Red, Green and Blue
             {

@@ -17,32 +17,11 @@ namespace IMB_Data_Processing
 {
     public class M3TcpTestClient
     {
-        //private TcpClient client;
         private FileStream m_fileStream;
-        //private BinaryReader m_reader;
-        //private BinaryWriter m_writer;
-        //AsyncTCPdelegate sendCMD_TCP;
-        //private IAsyncResult m_asyncResult;
-        //private long m_totalbytes = 0;
         private byte[] m_buffer;
         private Bitmap m_bitMap;
-        //private object BytesLock = new object();
-        //private object GainLock = new object();
         private int m_bitmapGain = 15;
-        //Thread rThread;
-        //Thread bitThread;
-        //int m_copyBufferLength;
         string IMBfilename;
-        //public long TotalBytes
-        //{
-        //    get
-        //    {
-        //        //lock (BytesLock)
-        //        {
-        //            return m_totalbytes;
-        //        }
-        //    }
-        //}
         public int BitmapGain
         {
             get
@@ -67,85 +46,6 @@ namespace IMB_Data_Processing
                 return m_bitMap;
             }
         }
-        //public M3TcpTestClient()
-        //{
-        //    client = new TcpClient();
-        //    m_fileStream = null;
-        //    m_reader = null;
-        //    m_writer = null;
-        //}
-        //public M3TcpTestClient(string IP, int Port)
-        //{
-        //    client = new TcpClient();
-        //    client.Connect(IPAddress.Parse(IP), Port);
-        //    m_fileStream = client.GetStream();
-        //    m_writer = new BinaryWriter(m_fileStream, Encoding.ASCII);
-        //    m_reader = new BinaryReader(m_fileStream, Encoding.ASCII);
-        //}
-        //public void Connect(string IP, int Port)
-        //{
-        //    client.Connect(IPAddress.Parse(IP), Port);
-        //    m_fileStream = client.GetStream();
-        //    m_writer = new BinaryWriter(m_fileStream, Encoding.ASCII);
-        //    m_reader = new BinaryReader(m_fileStream, Encoding.ASCII);
-        //}
-        //public void Close()
-        //{
-        //    if (client != null) client.Close();
-        //    if (m_fileStream != null) m_fileStream.Close();
-        //    if (m_reader != null) m_reader.Close();
-        //    if (m_writer != null) m_writer.Close();
-        //}
-        //public void Write(string Message)
-        //{
-        //    byte[] buffer = Encoding.ASCII.GetBytes(Message);
-        //    m_writer.Write(buffer, 0, buffer.Length);
-        //}
-        //public void StartImbThreads(int buffLength, int Width, int Height)
-        //{
-        //    m_bitMap = new Bitmap(Width, Height, PixelFormat.Format32bppArgb);
-        //    bufferl = buffLength;
-        //    m_buffer = new byte[buffLength];
-        //    rThread = new Thread(StartIMBread);
-        //    rThread.Start();
-        //    bitThread = new Thread(StartBitmapCreation);
-        //    bitThread.Start();
-        //}
-        //public void StartIMBfileThread(string inFilename)
-        //{
-        //    IMBfilename = inFilename;
-        //    rThread = new Thread(StartIMBfileread);
-        //    rThread.Start();
-        //}
-        //public void StopIMBfileThread()
-        //{
-        //    rThread.Abort();
-        //}
-        //public void StopImbThreads()
-        //{
-        //    rThread.Abort();
-        //    bitThread.Abort();
-        //}
-        //public void StartReadThread()
-        //{
-        //    sendCMD_TCP = SendCMD_TCP;
-        //    m_asyncResult = sendCMD_TCP.BeginInvoke(m_reader, null, null);
-        //}
-        //public bool ThreadDone()
-        //{
-        //    if (m_asyncResult.AsyncWaitHandle.WaitOne(0, false))
-        //    {
-        //        return true;
-        //    }
-        //    else
-        //    {
-        //        return false;
-        //    }
-        //}
-        //public string ReadThread()
-        //{
-        //    return sendCMD_TCP.EndInvoke(m_asyncResult);
-        //}
 
         public void StartIMBfileread(string inFilename)
         {
@@ -155,65 +55,38 @@ namespace IMB_Data_Processing
 
         private void StartIMBfileread()
         {
-            //int MaxBufferSize = 1194892;//16777216; // 16MB
-            //byte[] Readbuffer = new byte[MaxBufferSize];
-            //FileStream IMBfilestream = null;
             m_fileStream = null;
             try
             {
                 m_fileStream = new FileStream(IMBfilename, FileMode.Open);
-                //m_buffer = new byte[MaxBufferSize];
-                //IMBClient.StartImbThreads(10000000, 1200, 600);
                 m_bitMap = new Bitmap(1200, 600);
-                //m_reader = new BinaryReader(m_fileStream, Encoding.ASCII);
-                //int bytesRead = 0;
                 IMBPacket packet = null;
                 do
                 {
 
-                     packet = ParseIMBfile.ReadPacketFromStream(false, m_fileStream);
+                    packet = ParseIMBfile.ReadPacketFromStream(false, m_fileStream);
 
                     if (packet != null)
                     {
                         m_bitMap = IMBtoBitmap.IMBpacketToBitmap((IMBPacket)packet, m_bitMap.Width, m_bitMap.Height, BitmapGain);
-                        string fName = string.Format("C:\\AJFTemp\\Try{0}.bmp", DateTime.Now.Ticks);
+                        string fName = System.IO.Path.Combine("C:\\AJFTemp\\", CreateFilename(packet, "DeployingPABLO"));
                         m_bitMap.Save(fName, ImageFormat.Bmp);
                     }
 
 
                 } while (packet != null);
-
-                //while (rThread.IsAlive == true)
-                //{
-                //    int BytesRead = m_fileStream.Read(Readbuffer, 0, MaxBufferSize);
-                //    if (BytesRead > 0)
-                //    {
-                //        IMBfilestream.Write(Readbuffer, 0, BytesRead);
-                //        lock (BytesLock)
-                //        {
-                //            m_totalbytes += BytesRead;
-                //        }
-                //    }
-                //}
             }
             catch (UnauthorizedAccessException)
             {
                 Console.WriteLine("Invalid File Path\n", "Error");
-                //this.StopIMBfileThread();
             }
             catch (IOException ioex)
             {
                 Console.WriteLine("Lost connection to TCP server\n" + ioex.ToString(), "Error");
-                //this.StopIMBfileThread();
             }
-            //catch (ThreadAbortException abortex)
-            //{
-            //    return;
-            //}
             catch (Exception ex)
             {
                 Console.WriteLine("Something went wrong with StartIMBfileread\n" + ex.ToString(), "Error");
-                //this.StopImbThreads();
             }
             finally
             {
@@ -222,106 +95,25 @@ namespace IMB_Data_Processing
                 m_fileStream = null;
             }
         }
-        //private void StartIMBread()
-        //{
-        //    while (this.m_reader != null)
-        //    {
-        //        Monitor.Enter(m_buffer);
-        //        try
-        //        {
-        //            m_reader.Read(m_buffer, 0, m_buffer.GetLength(0));
-        //            m_reader.BaseStream.Flush();
-        //        }
-        //        catch (IOException ioex)
-        //        {
-        //            Console.WriteLine("Something went wrong with StartIMBread\n" + ioex.ToString(), "Error");
-        //            this.StopImbThreads();
-        //        }
-        //        catch (ThreadAbortException abortex)
-        //        {
-        //            break;
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            Console.WriteLine("Something went wrong with StartIMBread\n" + ex.ToString(), "Error");
-        //            this.StopImbThreads();
-        //        }
-        //        finally
-        //        {
-        //            Monitor.Exit(m_buffer);
-        //        }
-        //    }
-        //}
-        //private void StartBitmapCreation(/*object state*/)
-        //{
-        //    //Bitmap map = (Bitmap)state;
-        //    ParseIMBfile IMBobject = new ParseIMBfile();
-        //    Bitmap copybitmap = null;
-        //    int copygain;
-        //    bool AquireLock = false;
-        //    byte[] copybuffer = new byte[m_copyBufferLength];
-        //    int Width = m_bitMap.Width;
-        //    int Height = m_bitMap.Height;
-        //    while (true)
-        //    {
-        //        AquireLock = false;
-        //        Monitor.Enter(m_buffer, ref AquireLock);
-        //        try
-        //        {
-        //            Array.Copy(m_buffer, copybuffer, m_copyBufferLength);
-        //        }
-        //        finally
-        //        {
-        //            if (AquireLock == true)
-        //                Monitor.Exit(m_buffer);
-        //        }
-        //        try
-        //        {
-        //            IMBobject.Parsebuffer(copybuffer);
-        //        }
-        //        catch (ThreadAbortException)
-        //        {
-        //        }
-        //        if (IMBobject.CurrentPacket == null)
-        //        {
-        //            continue;
-        //        }
-        //        copygain = BitmapGain;
-        //        //lock (GainLock)
-        //        //{
-        //        //    copygain = m_bitmapGain;
-        //        //}
-        //        try
-        //        {
-        //            copybitmap = IMBtoBitmap.IMBpacketToBitmap(IMBobject.CurrentPacket, Width, Height, copygain);
-        //        }
-        //        catch (ThreadAbortException)
-        //        {
-        //        }
-        //        lock (m_bitMap)
-        //        {
-        //            if (copybitmap != null)
-        //            {
-        //                string fName = string.Format("C:\\AJFTemp\\Try{0}.bmp", DateTime.Now.Ticks);
-        //                copybitmap.Save(fName, ImageFormat.Bmp);
 
-        //                m_bitMap = new Bitmap(copybitmap);
-        //            }
-        //        }
-        //    }
-        //}
-        //// Delegate used to start a thread with SendCMD_TCP
-        //private delegate string AsyncTCPdelegate(BinaryReader threadr);
+        private string CreateTimecode(IMBPacket packet)
+        {
+            DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc); // Add the number of seconds to the epoch time
+            DateTime timecode = epoch.AddSeconds(packet.dwTimeSec);
+            timecode = timecode.AddMilliseconds(packet.dwTimeMillisec);
 
-        //// Used in a seperate thread to wait and read from a TCP_IP server connection
-        //private static string SendCMD_TCP(BinaryReader threadr)
-        //{
-        //    byte[] buffer = new byte[2048]; // read in chunks of 2KB
-        //    int read = threadr.Read(buffer, 0, buffer.Length);
-        //    byte[] copybuffer = new byte[read];
-        //    Array.Copy(buffer, copybuffer, read);
-        //    return Encoding.ASCII.GetString(copybuffer);
-        //}
+            String s_timecode = string.Format("{0:yyyyMMdd_HHmmss.fff}", timecode);
+
+            return s_timecode;
+        }
+
+        private string CreateFilename(IMBPacket packet, String datasetname)
+        {
+            string filename = datasetname + "_" + packet.dwModeID + "_" + packet.fNearRange + "_" + packet.fFarRange + "_" + CreateTimecode(packet) + ".bmp";
+
+
+            return filename;
+        }
     }
 
 
@@ -797,5 +589,6 @@ namespace IMB_Data_Processing
         }
 
     }
+
 }
 

@@ -12,7 +12,7 @@ namespace IMB_Data_Processing
         {
             M3TcpTestClient IMBClient = new M3TcpTestClient();
             
-            string inputPath = string.Empty;
+            string inputPath = "E:\\Wrasbury_2024_Data\\RAW Data\\day_2\\Sonar Data\\Deploying PABLO Lander\\imb\\deployingPabloLander.imb";
             string outputPath = string.Empty;
 
             if (args.Length > 0 && System.IO.File.Exists(args[0]))
