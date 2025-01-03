@@ -13,7 +13,7 @@ namespace IMB_Data_Processing
             M3TcpTestClient IMBClient = new M3TcpTestClient();
             
             string inputPath = "E:\\Wrasbury_2024_Data\\RAW Data\\day_2\\Sonar Data\\Deploying PABLO Lander\\imb\\deployingPabloLander.imb";
-            string outputPath = string.Empty;
+            string outputPath = "C:\\AJFTemp";
 
             if (args.Length > 0 && System.IO.File.Exists(args[0]))
             {
@@ -23,14 +23,14 @@ namespace IMB_Data_Processing
             {
                 outputPath = args[1];
             }
-            ProcessIMBFileToFrames(IMBClient, inputPath, "");
+            ProcessIMBFileToFrames(IMBClient, inputPath, outputPath);
         }
 
 
         static void ProcessIMBFileToFrames(M3TcpTestClient IMBclient, string input_path, string output_path)
         {
             M3TcpTestClient m3TcpTestClient = new M3TcpTestClient();
-            m3TcpTestClient.StartIMBfileread(input_path);
+            m3TcpTestClient.StartIMBfileread(input_path, output_path);
         }
 
 

@@ -22,6 +22,7 @@ namespace IMB_Data_Processing
         private Bitmap m_bitMap;
         private int m_bitmapGain = 15;
         string IMBfilename;
+        string outFilePath;
         public int BitmapGain
         {
             get
@@ -47,9 +48,10 @@ namespace IMB_Data_Processing
             }
         }
 
-        public void StartIMBfileread(string inFilename)
+        public void StartIMBfileread(string inFilename, string outFilename)
         {
             IMBfilename=inFilename;
+            outFilePath= outFilename;
             StartIMBfileread();
         }
 
@@ -69,7 +71,7 @@ namespace IMB_Data_Processing
                     if (packet != null)
                     {
                         m_bitMap = IMBtoBitmap.IMBpacketToBitmap((IMBPacket)packet, m_bitMap.Width, m_bitMap.Height, BitmapGain);
-                        string fName = System.IO.Path.Combine("C:\\AJFTemp\\", CreateFilename(packet, "DeployingPABLO"));
+                        string fName = System.IO.Path.Combine(outFilePath, CreateFilename(packet, "DeployingPABLO"));
                         m_bitMap.Save(fName, ImageFormat.Bmp);
                     }
 
