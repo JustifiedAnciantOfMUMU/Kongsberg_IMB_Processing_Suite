@@ -71,7 +71,7 @@ namespace IMB_Data_Processing
                     if (packet != null)
                     {
                         m_bitMap = IMBtoBitmap.IMBpacketToBitmap((IMBPacket)packet, m_bitMap.Width, m_bitMap.Height, BitmapGain);
-                        string fName = System.IO.Path.Combine(outFilePath, CreateFilename(packet, "DeployingPABLO"));
+                        string fName = System.IO.Path.Combine(outFilePath, CreateFilename(packet, Path.GetFileNameWithoutExtension(IMBfilename)));
                         m_bitMap.Save(fName, ImageFormat.Bmp);
                     }
 
@@ -115,6 +115,21 @@ namespace IMB_Data_Processing
 
 
             return filename;
+        }
+
+
+
+
+
+        public IMBPacket return_single_packet(string inFilename)
+        {
+            IMBfilename = inFilename;
+
+            m_fileStream = new FileStream(IMBfilename, FileMode.Open);
+            IMBPacket packet = null;
+            packet = ParseIMBfile.ReadPacketFromStream(false, m_fileStream);
+
+            return packet;
         }
     }
 

@@ -62,8 +62,7 @@ namespace IMB_Data_Processing
 
             await Task.Run(() =>
             {
-                M3TcpTestClient IMBClient = new M3TcpTestClient();
-                Program.ProcessIMBFileToFrames(IMBClient, s_source_filepath, s_dest_folderpath);
+                Program.ProcessIMBFileToFrames( s_source_filepath, s_dest_folderpath);
             });
                 
            MessageBox.Show("Extraction Completed", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
